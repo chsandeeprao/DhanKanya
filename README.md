@@ -6,6 +6,8 @@ DhanKanya is a financial assistant that provides expert financial guidance, enha
 
 Install the required packages using the following command:
 
+> Note: If you are running a MacOS with ARM chip (M series), `pyaudio` installation might fail. You may need to install the `portaudio` package separately for it to work. You can do this by running the following command: ```brew install portaudio```
+
 ```bash
 pip install -r requirements.txt
 ```
