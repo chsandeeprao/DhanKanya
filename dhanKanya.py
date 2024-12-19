@@ -66,11 +66,17 @@ def main():
 
     # Create the Anthropic client with the API key
     try:
-        # Simplified client initialization without proxy configuration
+        # Add debug logging
+        logger.info(f"ANTHROPIC_API_KEY exists: {bool(ANTHROPIC_API_KEY)}")
+        logger.info("Attempting to create Anthropic client")
+        
         client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        
+        logger.info("Successfully created Anthropic client")
         st.sidebar.success("AI assistant initialized successfully!")
     except Exception as e:
         logger.error(f"Error creating Anthropic client: {e}")
+        logger.error(f"Full traceback: {traceback.format_exc()}")
         st.sidebar.error(f"Failed to initialize the AI assistant. Error: {str(e)}")
         return
 
