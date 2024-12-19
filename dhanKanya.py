@@ -12,7 +12,7 @@ import json
 
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.embeddings import HuggingFaceBgeEmbeddings
-from langchain.vectorstores.chroma import Chroma
+from langchain_community.vectorstores import Chroma
 
 load_dotenv()
 
@@ -66,7 +66,7 @@ def main():
 
     # Create the Anthropic client with the API key
     try:
-        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        client = anthropic.Client(api_key=ANTHROPIC_API_KEY)
         st.sidebar.success("AI assistant initialized successfully!")
     except Exception as e:
         logger.error(f"Error creating Anthropic client: {e}")
