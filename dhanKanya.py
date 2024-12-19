@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 CHROMA_PATH = 'chroma'
-ANTHROPIC_API_KEY = st.secrets["ANTHROPIC_API_KEY"] # Get the API key from .env file using dotenv library
+ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY') # Get the API key from .env file using dotenv library
 if not ANTHROPIC_API_KEY:
     raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
 
