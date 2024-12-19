@@ -6,6 +6,10 @@ import speech_recognition as sr
 import re 
 import os
 import logging
+
+import sys
+import traceback
+
 from dotenv import load_dotenv
 import traceback
 import json
@@ -57,26 +61,102 @@ INTRODUCTION_PROMPTS = [
     r'namaste'
 ]
 
+# def main():
+#     st.set_page_config(page_title="Financial Advisor for Your Dreams", page_icon=":moneybag:", layout="wide")
+
+#     # Create a navigation bar
+#     menu = ["Home", "Scholarships & Schemes per your State", "Build Your Wealth"]
+#     choice = st.sidebar.selectbox("Navigation", menu)
+
+#     # Create the Anthropic client with the API key
+#     try:
+#         # Add debug logging
+#         logger.info(f"ANTHROPIC_API_KEY exists: {bool(ANTHROPIC_API_KEY)}")
+#         logger.info("Attempting to create Anthropic client")
+        
+#         client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        
+#         logger.info("Successfully created Anthropic client")
+#         st.sidebar.success("AI assistant initialized successfully!")
+#     except Exception as e:
+#         logger.error(f"Error creating Anthropic client: {e}")
+#         logger.error(f"Full traceback: {traceback.format_exc()}")
+#         st.sidebar.error(f"Failed to initialize the AI assistant. Error: {str(e)}")
+#         return
+
+#     # Display the selected page
+#     if choice == "Home":
+#         home_page(client)
+#     elif choice == "Scholarships & Schemes per your State":
+#         templates_page(client)
+#     elif choice == "Build Your Wealth":
+#         expense_tracker_page()
+
+def check_env_file():
+    """Check the contents of .env file"""
+    logger.info("=== Checking .env file ===")
+    try:
+        with open('.env', 'r') as f:
+            for line in f:
+                if line.strip() and not line.startswith('#'):
+                    key = line.split('=')[0].strip()
+                    logger.info(f"Found config key: {key}")
+    except FileNotFoundError:
+        logger.info("No .env file found")
+
 def main():
     st.set_page_config(page_title="Financial Advisor for Your Dreams", page_icon=":moneybag:", layout="wide")
+
+    # Diagnostic logging
+    logger.info("=== Starting Application Diagnostics ===")
+    logger.info(f"Python version: {sys.version}")
+    logger.info(f"Anthropic package version: {anthropic.__version__}")
+    logger.info(f"Running on Streamlit version: {st.__version__}")
+    
+    # Log environment info
+    logger.info("=== Environment Check ===")
+    is_cloud = os.getenv('STREAMLIT_DEPLOYMENT_RUNTIME') == 'cloud'
+    logger.info(f"Running on Streamlit Cloud: {is_cloud}")
+    
+    # Check for proxy-related environment variables
+    logger.info("=== Proxy Configuration Check ===")
+    proxy_vars = {k: '***' for k, v in os.environ.items() 
+                 if 'PROXY' in k.upper() or 'HTTP' in k.upper()}
+    logger.info(f"Proxy-related environment variables: {proxy_vars}")
+
+    # Check .env file
+    check_env_file()
 
     # Create a navigation bar
     menu = ["Home", "Scholarships & Schemes per your State", "Build Your Wealth"]
     choice = st.sidebar.selectbox("Navigation", menu)
 
-    # Create the Anthropic client with the API key
+    # Create the Anthropic client with extra error handling
     try:
-        # Add debug logging
-        logger.info(f"ANTHROPIC_API_KEY exists: {bool(ANTHROPIC_API_KEY)}")
-        logger.info("Attempting to create Anthropic client")
+        logger.info("Attempting to create Anthropic client...")
         
-        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        # Force disable any proxy settings
+        os.environ.pop('HTTP_PROXY', None)
+        os.environ.pop('HTTPS_PROXY', None)
+        os.environ.pop('http_proxy', None)
+        os.environ.pop('https_proxy', None)
         
+        # Create client with minimal configuration
+        client_config = {
+            'api_key': ANTHROPIC_API_KEY
+        }
+        logger.info("Client configuration prepared (API key masked)")
+        
+        client = anthropic.Anthropic(**client_config)
         logger.info("Successfully created Anthropic client")
         st.sidebar.success("AI assistant initialized successfully!")
+        
     except Exception as e:
-        logger.error(f"Error creating Anthropic client: {e}")
-        logger.error(f"Full traceback: {traceback.format_exc()}")
+        logger.error("=== Anthropic Client Error ===")
+        logger.error(f"Error type: {type(e)}")
+        logger.error(f"Error message: {str(e)}")
+        logger.error(f"Error args: {e.args}")
+        logger.error(f"Traceback:\n{traceback.format_exc()}")
         st.sidebar.error(f"Failed to initialize the AI assistant. Error: {str(e)}")
         return
 
