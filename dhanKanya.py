@@ -66,7 +66,8 @@ def main():
 
     # Create the Anthropic client with the API key
     try:
-        client = anthropic.Client(api_key=ANTHROPIC_API_KEY)
+        # Simplified client initialization without proxy configuration
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
         st.sidebar.success("AI assistant initialized successfully!")
     except Exception as e:
         logger.error(f"Error creating Anthropic client: {e}")
@@ -308,17 +309,23 @@ def get_response(prompt, client):
             if re.search(pattern, prompt_lower):
                 return "Namaste! I'm your financial assistant, developed by the Finance team at 100GIGA and powered by Anthropic's Claude AI model. My purpose is to provide you with expert financial guidance, enhancing your financial literacy and addressing your needs. Feel free to ask me anything related to finance, and I'll be here to assist you every step of the way."
         
+        # Updated message creation syntax for anthropic v0.42.0
         message = client.messages.create(
             model=st.session_state["claude_model"],
-            max_tokens=600,
-            messages=[{"role": "user", "content": prompt}]
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            max_tokens=600
         )
-        return ''.join(block.text for block in message.content)
+        return message.content[0].text
+
     except Exception as e:
         logger.error(f"Error getting response from Claude: {e}")
         logger.error(traceback.format_exc())
         return f"I apologize, but I'm having trouble generating a response at the moment. \nError details: {str(e)}"
-
 
 if __name__ == "__main__":
     main()
