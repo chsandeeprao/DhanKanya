@@ -5,4 +5,5 @@ pandas>=2.2.0
 SpeechRecognition>=3.10.0
 streamlit>=1.37.1
 python-dotenv>=1.0.0
---no-binary :all: pyaudio
+--no-binary :all: pyaudioanthropic==0.42.0
+anthropic-cli==0.2.3
