@@ -26,8 +26,6 @@ logger = logging.getLogger(__name__)
 
 CHROMA_PATH = 'chroma'
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY') # Get the API key from .env file using dotenv library
-if not ANTHROPIC_API_KEY:
-    raise ValueError("ANTHROPIC_API_KEY not found in environment variables")
 
 PROMPT_TEMPLATE = """
 Answer the question so that it is easily understandable. The context is provided so that you can take reference from this. Please take inspiration from the context. You can also add things that you think are helpful for girls out there. Do not mention about the context provided. Answer as you usually answer.
