@@ -147,7 +147,7 @@ def main():
         }
         logger.info("Client configuration prepared (API key masked)")
         
-        client = anthropic.Anthropic(**client_config)
+        client = anthropic.Anthropic()
         logger.info("Successfully created Anthropic client")
         st.sidebar.success("AI assistant initialized successfully!")
         
